@@ -4,6 +4,10 @@ from web import form
 import model
 
 DB_NAME = "db.db"
+DB_TABLE = "registration"
+DB_COLUMNS = ("title", 'surname', 'name', 'institute', 'city', 'country', 'email', 'ptitle', 'pabstract', 'ptype', 'pcomment')
+
+db = web.db.database(dbn='sqlite', db=DB_NAME)
 
 render = web.template.render('templates') # your templates
 
@@ -13,7 +17,7 @@ vemail = form.regexp(r".*@.*", "must be a valid email address")
 def check_bot(i):
     return i["botcheck"] in ("Abel", "Feudel", "Grassberger", "Politi", "Rosenblum")
 
-botmsg = "Please enter any last name of an organiser."
+botmsg = "Please enter any last name of an organizer."
 
 def check_submission(i, key):
     if i["ptype"] == "None":
@@ -25,7 +29,7 @@ register_form = form.Form(
     form.Dropdown ("title", ('Mr.', 'Mrs.', 'Dr.', 'Prof.'), description="Title"),
     form.Textbox("surname", form.notnull, description="Surname"),
     form.Textbox("name", form.notnull, description="Name"),
-    form.Textbox("institut", form.notnull, description="Institute"),
+    form.Textbox("institute", form.notnull, description="Institute"),
     form.Textbox("city", form.notnull, description="City"),
     form.Textbox("country", form.notnull, description="Country"),
     form.Textbox("email", vemail, description="E-Mail"),
@@ -51,8 +55,9 @@ class register:
         if not f.validates():
             return render.register(f)
         else:
-            with model.make_connection(DB_NAME) as connection:
-                model.dump_registration(f.value, connection)
+            values = {k: f.value[k] for k in DB_COLUMNS}
+            with db.transaction():
+                db.insert(DB_TABLE, **values)
             return web.seeother("/")
 
 
