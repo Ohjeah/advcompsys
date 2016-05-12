@@ -1,3 +1,5 @@
+import glob
+import itertools
 import web
 from web import form
 
@@ -39,28 +41,41 @@ register_form = form.Form(
     form.Textbox("botcheck", value=botmsg, description="Botcheck", size=len(botmsg)),
     form.Button("submit", type="submit", description="Register"),
     validators=[form.Validator("Poster title is missing.", lambda i: check_submission(i, "ptitle")),
-                form.Validator("Poster abstract is missing.", lambda i: check_submission(i, "abstract")),
+                form.Validator("Poster abstract is missing.", lambda i: check_submission(i, "pabstract")),
                 form.Validator("Botcheck failed.", check_bot)]
 )
 
 
-class Register:
+class Registration:
     def GET(self):
         f = register_form()
-        return render.register(f)
+        return render.registration(f)
 
     def POST(self):
         f = register_form()
         if not f.validates():
-            return render.register(f)
+            return render.registration(f)
         else:
             values = {k: f.value[k] for k in DB_COLUMNS}
             with db.transaction():
                 db.insert(DB_TABLE, **values)
             return web.seeother("/")
 
+class StaticSite:
+    def GET(self, name):
+        name = name[:-1]
+        return render.__getattr__(name)()
 
-urls = ("/", Register)
+class Root:
+    def GET(self):
+        return render.index()
+
+
+urls = (
+        "/registration/", Registration,
+        "/(.*/)", StaticSite,
+        "/", Root
+    )
 
 if __name__ == "__main__":
     app = web.application(urls, globals())

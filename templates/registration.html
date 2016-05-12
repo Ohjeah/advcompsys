@@ -1,0 +1,38 @@
+$def with(form)
+ <!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../static/style.css">
+<title>Registration — Advances in the collective behaviour of complex systems!</title>
+<body>
+  <header>
+    <div id="headline"><h1>Advances in the collective<br>behaviour of complex systems!</h1>
+      <nav>
+        <ul class="nav navbar-nav">
+          <li><a href="../">Welcome</a></li>
+          
+            <li class="active"><a href="../registration/">Registration</a></li>
+          
+            <li><a href="../timetable/">Fees and Timetable</a></li>
+          
+            <li><a href="../location/">Location</a></li>
+          
+            <li><a href="../informations/">Additional Infos</a></li>
+          
+        </ul>
+      </nav>
+    </div>
+    <img src="../static/logo.png" id="uni-logo">
+    <img src="../static/dycos.png" id="dycos-logo">
+  </header>
+  <div class="page">
+    
+  <h2>Registration</h2>
+  <form method="POST">
+    $:form.render()
+</form>
+
+  </div>
+  <footer>
+    &copy; Copyright 2016 by mq.
+  </footer>
+</body>
