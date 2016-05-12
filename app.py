@@ -1,6 +1,13 @@
 #!/usr/bin/python
 import glob
 import itertools
+
+import os
+
+home = '/advances'
+os.environ["SCRIPT_NAME"] = home
+os.environ["REAL_SCRIPT_NAME"] = home
+
 import web
 from web import form
 
