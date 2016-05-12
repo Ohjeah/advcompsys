@@ -57,19 +57,22 @@ register_form = form.Form(
 class Registration:
     def GET(self):
         f = register_form()
-        return render.registration(f)
+        return render.registration(f, None)
 
     def POST(self):
         f = register_form()
         if not f.validates():
-            return render.registration(f)
+            msg = "Poster information incomplete!"
+            return render.registration(f, msg)
         else:
             values = dict((k, f.value[k]) for k in DB_COLUMNS)
             with db.transaction():
                 db.insert(DB_TABLE, **values)
 
-            web.sendmail('advances', 'mquade@uni-potsdam.de', 'New registration for advances', str(values))
-            return web.seeother("/")
+            email_body = "{title} {surname} {name} from {institute} registered for the conference.".format(**values)
+            #web.sendmail('advances', ['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'], 'New registration for advances', email_body)
+            msg = "Registration successful"
+            return render.registration(f, msg)
 
 class StaticSite:
     def GET(self, name):

@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="{{ '/static/style.css'|url }}">
+<title>{% block title %}Welcome{% endblock %} — Advances in the collective behaviour of complex systems!</title>
+<body>
+  <header>
+    <div id="headline"><h1>Advances in the collective<br>behaviour of complex systems!</h1>
+      <nav>
+        <ul class="nav navbar-nav">
+          <li{% if this._path == '/' %} class="active"{% endif
+            %}><a href="{{ '/'|url }}">Welcome</a></li>
+          {% for href, title in [
+            ['/registration', 'Registration'],
+            ['/timetable', 'Fees and Timetable'],
+            ['/location', 'Location'],
+            ['/informations', 'Additional Infos']
+          ] %}
+            <li{% if this.is_child_of(href) %} class="active"{% endif
+              %}><a href="{{ href|url }}">{{ title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+    <img src="{{ '/static/logo.png'|url }}" id="uni-logo">
+    <img src="{{ '/static/dycos.png'|url }}" id="dycos-logo">
+  </header>
+  <div class="page">
+    {% block body %}{% endblock %}
+  </div>
+  <footer>
+    &copy; Copyright 2016 by Markus Quade.
+  </footer>
+</body>

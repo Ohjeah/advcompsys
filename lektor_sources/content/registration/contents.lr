@@ -1,0 +1,9 @@
+title: Registration
+---
+body:
+
+$if msg: <h3> $msg </h3>
+
+<form method="POST">
+    $:form.render()
+</form>

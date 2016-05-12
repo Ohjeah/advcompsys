@@ -1,4 +1,4 @@
-$def with(form)
+$def with(form, msg)
  <!doctype html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="../static/style.css">
@@ -27,12 +27,13 @@ $def with(form)
   <div class="page">
     
   <h2>Registration</h2>
-  <form method="POST">
+$if msg: <h3> $msg </h3>
+<form method="POST">
     $:form.render()
 </form>
 
   </div>
   <footer>
-    &copy; Copyright 2016 by mq.
+    &copy; Copyright 2016 by Markus Quade.
   </footer>
 </body>
