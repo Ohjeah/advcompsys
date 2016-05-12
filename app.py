@@ -56,7 +56,7 @@ class Registration:
         if not f.validates():
             return render.registration(f)
         else:
-            values = {k: f.value[k] for k in DB_COLUMNS}
+            values = dict((k, f.value[k]) for k in DB_COLUMNS)
             with db.transaction():
                 db.insert(DB_TABLE, **values)
             return web.seeother("/")
