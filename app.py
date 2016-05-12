@@ -67,6 +67,8 @@ class Registration:
             values = dict((k, f.value[k]) for k in DB_COLUMNS)
             with db.transaction():
                 db.insert(DB_TABLE, **values)
+
+            web.sendmail('advances', 'mquade@uni-potsdam.de', 'New registration for advances', str(values))
             return web.seeother("/")
 
 class StaticSite:
