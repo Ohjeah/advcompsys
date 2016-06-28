@@ -1,3 +1,4 @@
+set +e
 sources=lektor_sources
 webpy=/home/mq/Work/repo/advcompsys/
 cd $sources
