@@ -72,7 +72,7 @@ class Registration:
             email_body = "Dear {title} {surname} {name} from {institute}, \n \
 you successfully registered for the conference. \n \n \
 Kind regards, \n \
-The organizerers".format(**values)
+The organizers".format(**values)
 
             web.sendmail('advances', values['email'], 'Successful registration for advances',
                          email_body, cc=['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'])
