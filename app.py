@@ -74,8 +74,8 @@ class Registration:
                           Kind regards, \n \
                           The organizerers".format(**values)
 
-            web.sendmail('advances', values['email'],cc=['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'],
-                         'Successful registration for advances', email_body)
+            web.sendmail('advances', values['email'], 'Successful registration for advances',
+                         email_body, cc=['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'])
 
             msg = "Registration successful"
             return render.registration(f, msg)
