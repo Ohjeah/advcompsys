@@ -36,8 +36,8 @@ def check_submission(i, key):
 
 register_form = form.Form(
     form.Dropdown("title", ('Mr.', 'Mrs.', 'Dr.', 'Prof.'), description="Title"),
-    form.Textbox("surname", form.notnull, description="Surname"),
-    form.Textbox("name", form.notnull, description="Name"),
+    form.Textbox("surname", form.notnull, description="First name"),
+    form.Textbox("name", form.notnull, description="Surname"),
     form.Textbox("institute", form.notnull, description="Institute"),
     form.Textbox("city", form.notnull, description="City"),
     form.Textbox("country", form.notnull, description="Country"),
