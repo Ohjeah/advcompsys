@@ -69,9 +69,9 @@ class Registration:
             with db.transaction():
                 db.insert(DB_TABLE, **values)
 
-            email_body = "Dear {title} {surname} {name} from {institute}, \n \
-you successfully registered for the conference. \n \n \
-Kind regards, \n \
+            email_body = u"Dear {title} {surname} {name} from {institute}, \n\
+you successfully registered for the conference. \n \n\
+Kind regards, \n\
 The organizers".format(**values)
 
             web.sendmail('advances', values['email'], 'Successful registration for advances',
