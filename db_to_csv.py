@@ -5,7 +5,7 @@ from app import DB_NAME, DB_TABLE
 
 
 if __name__ == "__main__":
-    query = "FROM {} SELECT *;".format{DB_TABLE}
+    query = "FROM {} SELECT *;".format(DB_TABLE)
     with sqlite3.connect(DB_NAME) as con:
         result = con.cursor().execute(query)
 
