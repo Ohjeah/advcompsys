@@ -1,5 +1,6 @@
 import sqlite3
 import csv
+import re
 
 from app import DB_NAME, DB_TABLE
 
