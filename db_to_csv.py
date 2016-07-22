@@ -11,8 +11,8 @@ def no_test_row(row):
     return not any(re.findall(pattern, s) for pattern in patterns for s in row)
 
 
-def encode(row):
-    return [s.encode('utf-8') for s in row[:-1]]
+def encode(row, exclude=(7,)):
+    return [s.encode('utf-8') for i, s in enumerate(row) if i not in exclude]
 
 
 if __name__ == "__main__":
