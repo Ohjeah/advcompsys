@@ -8,7 +8,7 @@ patterns = re.compile("[Tt]est"), re.compile("[Qq]uade")
 
 
 def no_test_row(row):
-    return not any(re.findall(pattern, s) for pattern in patterns for s in row)
+    return not any(re.findall(pattern, s) for pattern in patterns for s in row[2:4])
 
 
 def encode(row, exclude=(8,)):
