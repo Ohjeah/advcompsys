@@ -16,7 +16,7 @@ DB_NAME = "db.db"
 DB_TABLE = "registration"
 DB_COLUMNS = ("title", 'surname', 'name', 'institute', 'city', 'country', 'email', 'ptitle', 'pabstract', 'ptype', 'pcomment')
 
-REGISTRATION_DEADLINE = datetime.datetime(year=2016, month=8, day=25, hour=23, minute=59, second=59)
+REGISTRATION_DEADLINE = datetime.datetime(year=2016, month=8, day=31, hour=23, minute=59, second=59)
 
 db = web.db.database(dbn='sqlite', db=DB_NAME)
 
