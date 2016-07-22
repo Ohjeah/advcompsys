@@ -12,7 +12,7 @@ def no_test_row(row):
 
 
 def encode(row):
-    return [s.encode('utf-8') for s in row]
+    return [s.encode('utf-8') for s in row[:-1]]
 
 
 if __name__ == "__main__":
