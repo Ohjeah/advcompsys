@@ -1,6 +1,6 @@
 set +e
 sources=lektor_sources
-webpy=/home/mq/repo/advcompsys/
+webpy=`pwd`
 cd $sources
 lektor build -O	tmp
 cp tmp/index.html $webpy/templates/.
