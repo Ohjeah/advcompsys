@@ -20,8 +20,8 @@ if __name__ == "__main__":
     with sqlite3.connect(DB_NAME) as con:
         result = con.cursor().execute(query)
 
-
-    result = map(encode, filter(no_test_row, result))
+    result = set(map(tuple, result))  # filter duplicates
+    result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
 
     with open("{0}.csv".format(DB_TABLE), 'w') as f:
         writer = csv.writer(f)
