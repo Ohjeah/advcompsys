@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import datetime
 import glob
 import itertools
 
@@ -14,6 +15,8 @@ from web import form
 DB_NAME = "db.db"
 DB_TABLE = "registration"
 DB_COLUMNS = ("title", 'surname', 'name', 'institute', 'city', 'country', 'email', 'ptitle', 'pabstract', 'ptype', 'pcomment')
+
+REGISTRATION_DEADLINE = datetime.datetime(year=2016, month=8, day=25, hour=23, minute=59, second=59)
 
 db = web.db.database(dbn='sqlite', db=DB_NAME)
 
@@ -65,19 +68,22 @@ class Registration:
             msg = "Poster information incomplete!"
             return render.registration(f, msg)
         else:
-            values = dict((k, f.value[k]) for k in DB_COLUMNS)
-            with db.transaction():
-                db.insert(DB_TABLE, **values)
+            if datetime.datetime.now() > REGISTRATION_DEADLINE:
+                msg = "Cannot register after deadline."
+            else:
+                values = dict((k, f.value[k]) for k in DB_COLUMNS)
+                with db.transaction():
+                    db.insert(DB_TABLE, **values)
 
-            email_body = u"Dear {title} {surname} {name} from {institute}, \n\
+                email_body = u"Dear {title} {surname} {name} from {institute}, \n\
 you successfully registered for the conference. \n \n\
 Kind regards, \n\
 The organizers".format(**values)
 
-            web.sendmail('advances', values['email'], 'Successful registration for advances',
-                         email_body, cc=['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'])
+                web.sendmail('advances', values['email'], 'Successful registration for advances',
+                             email_body, cc=['mros@uni-potsdam.de', 'mquade@uni-potsdam.de'])
 
-            msg = "Registration successful"
+                msg = "Registration successful"
             return render.registration(f, msg)
 
 class StaticSite:
