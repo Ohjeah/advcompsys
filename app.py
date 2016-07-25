@@ -2,7 +2,9 @@
 import datetime
 import glob
 import itertools
-
+import base64
+import hashlib
+import re
 import os
 
 home = '/advances'
@@ -11,6 +13,8 @@ os.environ["REAL_SCRIPT_NAME"] = home
 
 import web
 from web import form
+from allowed import LOGINS
+
 
 DB_NAME = "db.db"
 DB_TABLE = "registration"
@@ -86,21 +90,69 @@ The organizers".format(**values)
                 msg = "Registration successful"
             return render.registration(f, msg)
 
+
 class StaticSite:
     def GET(self, name):
         name = name[:-1]
         return render.__getattr__(name)()
+
 
 class Root:
     def GET(self):
         return render.index()
 
 
+class Login:
+    def GET(self):
+        auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+        authreq = False
+        if auth is None:
+            authreq = True
+        else:
+            auth = re.sub('^Basic ','',auth)
+            username, password = base64.decodestring(auth).split(':')
+            if (username, hashlib.sha512(password).hexdigest()) in LOGINS:
+                raise web.seeother('/')
+            else:
+                authreq = True
+        if authreq:
+            web.header('WWW-Authenticate', 'Basic realm="Auth example"')
+            web.ctx.status = '401 Unauthorized'
+            return
+
+
+def no_test_row(row):
+    return not any(re.findall(pattern, s) for pattern in patterns for s in row[2:4])
+
+
+def encode(row, exclude=(8,)):
+    return [s.encode('utf-8') for i, s in enumerate(row) if i not in exclude]
+
+
+patterns = re.compile("[Tt]est"), re.compile("[Qq]uade")
+
+
+class Participants:
+    def GET(self):
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is not None:
+            result = db.query("SELECT * FROM {0};".format(DB_TABLE))
+            result = set(map(tuple, result))  # filter duplicates
+            result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
+            result[0].pop(-1)
+            return render.participants(result)
+
+        else:
+            raise web.seeother('/login')
+
+
 urls = (
         "/registration/", Registration,
         "/(.*/)", StaticSite,
-        "/", Root
+        "/", Root,
+        "/login", Login,
+        "/participants", Participants
     )
+
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
