@@ -1,0 +1,3 @@
+[submodule "webpy_auth"]
+	path = webpy_auth
+	url = https://github.com/galeo/web.py-auth
