@@ -6,6 +6,7 @@ import base64
 import hashlib
 import re
 import os
+import time
 
 authkey = 'HTTP_AUTHORIZATION'
 home = '/advances'
@@ -143,6 +144,7 @@ class Participants:
                 web.ctx.env[authkey] = auth
                 return self.get_participants_page()
             else:
+                time.sleep(5) # slow down brute force
                 authreq = True
         if authreq:
             web.header('WWW-Authenticate', 'Basic realm="Participants"')
