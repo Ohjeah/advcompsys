@@ -154,7 +154,6 @@ class Participants:
     def GET(self):
 
         if web.ctx.env[authkey] is not None:
-            return web.ctx.env[authkey]
             result = db.select(DB_TABLE)
             result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
             result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
