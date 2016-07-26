@@ -7,21 +7,27 @@ import hashlib
 import re
 import os
 
-home = ''
+home = '/advances'
 os.environ["SCRIPT_NAME"] = home
 os.environ["REAL_SCRIPT_NAME"] = home
 
 import web
+web.config.debug = False
 from web import form
-#from auth import auth
-from allowed import LOGINS
 
-URLS = (
+
+urls = (
+        "/login/", "Login",
         "/participants/", "Participants",
         "/registration/", "Registration",
         "/(.*/)", "StaticSite",
         "/", "Root",
     )
+
+app = web.application(urls, globals())
+
+from allowed import LOGINS
+
 
 DB_NAME = "db.db"
 DB_TABLE = "registration"
@@ -30,10 +36,6 @@ DB_COLUMNS = ("title", 'surname', 'name', 'institute', 'city', 'country', 'email
 REGISTRATION_DEADLINE = datetime.datetime(year=2016, month=8, day=31, hour=23, minute=59, second=59)
 
 db = web.db.database(dbn='sqlite', db=DB_NAME)
-
-app = web.application(URLS, globals())
-#settings = {}
-#auth.init_app(app, db, **settings)
 
 render = web.template.render('templates')
 vpass = form.regexp(r".{3,20}$", 'must be between 3 and 20 characters')
@@ -113,6 +115,26 @@ class Root:
         return render.index()
 
 
+class Login:
+    def GET(self):
+        auth = web.ctx.env['HTTP_AUTHORIZATION']
+        authreq = False
+        if auth is None:
+            authreq = True
+        else:
+            auth = re.sub('^Basic ','',auth)
+            username, password = base64.decodestring(auth).split(':')
+            if (username, hashlib.sha512(password).hexdigest()) in LOGINS:
+                web.ctx.env['HTTP_AUTHORIZATION'] = auth
+                raise web.seeother('/')
+            else:
+                authreq = True
+        if authreq:
+            web.header('WWW-Authenticate', 'Basic realm="Auth example"')
+            web.ctx.status = '401 Unauthorized'
+            return
+
+
 def no_test_row(row):
     return not any(re.findall(pattern, s) for pattern in patterns for s in row[2:4])
 
@@ -120,18 +142,24 @@ def no_test_row(row):
 def encode(row, exclude=(8,)):
     return [s.encode('utf-8') for i, s in enumerate(row) if i not in exclude]
 
+def order(entry):
+    return [entry[i] for i in DB_COLUMNS]
+
 
 patterns = re.compile("[Tt]est"), re.compile("[Qq]uade")
 
 
 class Participants:
-    #@auth.protected()
     def GET(self):
-        result = db.query("SELECT * FROM {0};".format(DB_TABLE))
-        result = set(map(tuple, result))  # filter duplicates
-        result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
-        result[0].pop(-1)
-        return render.participants(result)
+        if web.ctx.env['HTTP_AUTHORIZATION'] is not None:
+            result = db.select(DB_TABLE)
+            result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
+            result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
+            result.insert(0, DB_COLUMNS)
+            return render.participants(result)
+
+        else:
+            raise web.seeother('/login/')
 
 
 if __name__ == "__main__":
