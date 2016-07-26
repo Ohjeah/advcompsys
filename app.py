@@ -120,7 +120,7 @@ class Login:
     def GET(self):
         auth = web.ctx.env[authkey]
         authreq = False
-        if auth is None:
+        if not auth:
             authreq = True
         else:
             auth = re.sub('^Basic ','',auth)
@@ -158,7 +158,7 @@ class Participants:
             result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
             result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
             result.insert(0, DB_COLUMNS)
-            return render.participants(web.ctx.env[authkey])
+            return render.participants(result)
 
         else:
             raise web.seeother('/login/')
