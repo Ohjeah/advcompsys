@@ -116,10 +116,6 @@ class Root:
         return render.index()
 
 
-class Login:
-
-
-
 def no_test_row(row):
     return not any(re.findall(pattern, s) for pattern in patterns for s in row[2:4])
 
