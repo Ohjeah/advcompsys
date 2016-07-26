@@ -158,7 +158,7 @@ class Participants:
             result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
             result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
             result.insert(0, DB_COLUMNS)
-            return render.participants(result)
+            return render.participants(web.ctx.env[authkey])
 
         else:
             raise web.seeother('/login/')
