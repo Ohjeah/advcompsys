@@ -131,7 +131,7 @@ class Login:
             else:
                 authreq = True
         if authreq:
-            web.header('WWW-Authenticate', 'Basic realm="Auth example"')
+            web.header('WWW-Authenticate', 'Basic realm="Participants"')
             web.ctx.status = '401 Unauthorized'
             return
 
