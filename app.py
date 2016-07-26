@@ -7,6 +7,7 @@ import hashlib
 import re
 import os
 
+auth = 'HTTP:Authentication'
 home = '/advances'
 os.environ["SCRIPT_NAME"] = home
 os.environ["REAL_SCRIPT_NAME"] = home
@@ -117,7 +118,7 @@ class Root:
 
 class Login:
     def GET(self):
-        auth = web.ctx.env['HTTP_AUTHORIZATION']
+        auth = web.ctx.env[authkey]
         authreq = False
         if auth is None:
             authreq = True
@@ -125,7 +126,7 @@ class Login:
             auth = re.sub('^Basic ','',auth)
             username, password = base64.decodestring(auth).split(':')
             if (username, hashlib.sha512(password).hexdigest()) in LOGINS:
-                web.ctx.env['HTTP_AUTHORIZATION'] = auth
+                web.ctx.env[authkey] = auth
                 raise web.seeother('/')
             else:
                 authreq = True
@@ -151,7 +152,7 @@ patterns = re.compile("[Tt]est"), re.compile("[Qq]uade")
 
 class Participants:
     def GET(self):
-        if web.ctx.env['HTTP_AUTHORIZATION'] is not None:
+        if web.ctx.env[authkey] is not None:
             result = db.select(DB_TABLE)
             result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
             result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
