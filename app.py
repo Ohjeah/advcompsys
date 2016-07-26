@@ -7,7 +7,7 @@ import hashlib
 import re
 import os
 
-auth = 'HTTP:Authentication'
+authkey = 'HTTP:Authentication'
 home = '/advances'
 os.environ["SCRIPT_NAME"] = home
 os.environ["REAL_SCRIPT_NAME"] = home
