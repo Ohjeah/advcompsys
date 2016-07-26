@@ -149,7 +149,7 @@ class Participants:
             web.ctx.status = '401 Unauthorized'
             return
 
-    def get_participants_page():
+    def get_participants_page(self):
         result = db.select(DB_TABLE)
         result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
         result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
