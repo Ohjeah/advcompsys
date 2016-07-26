@@ -117,23 +117,7 @@ class Root:
 
 
 class Login:
-    def GET(self):
-        auth = web.ctx.env[authkey]
-        authreq = False
-        if not auth:
-            authreq = True
-        else:
-            auth = re.sub('^Basic ','',auth)
-            username, password = base64.decodestring(auth).split(':')
-            if (username, hashlib.sha512(password).hexdigest()) in LOGINS:
-                web.ctx.env[authkey] = auth
-                raise web.seeother('/')
-            else:
-                authreq = True
-        if authreq:
-            web.header('WWW-Authenticate', 'Basic realm="Participants"')
-            web.ctx.status = '401 Unauthorized'
-            return
+
 
 
 def no_test_row(row):
@@ -152,16 +136,29 @@ patterns = re.compile("[Tt]est"), re.compile("[Qq]uade")
 
 class Participants:
     def GET(self):
-
-        if web.ctx.env[authkey] is not None:
-            result = db.select(DB_TABLE)
-            result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
-            result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
-            result.insert(0, DB_COLUMNS)
-            return render.participants(result)
-
+        auth = web.ctx.env[authkey]
+        authreq = False
+        if not auth:
+            authreq = True
         else:
-            raise web.seeother('/login/')
+            auth = re.sub('^Basic ','',auth)
+            username, password = base64.decodestring(auth).split(':')
+            if (username, hashlib.sha512(password).hexdigest()) in LOGINS:
+                web.ctx.env[authkey] = auth
+                return self.get_participants_page()
+            else:
+                authreq = True
+        if authreq:
+            web.header('WWW-Authenticate', 'Basic realm="Participants"')
+            web.ctx.status = '401 Unauthorized'
+            return
+
+    def get_participants_page():
+        result = db.select(DB_TABLE)
+        result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
+        result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
+        result.insert(0, DB_COLUMNS)
+        return render.participants(result)
 
 
 if __name__ == "__main__":
