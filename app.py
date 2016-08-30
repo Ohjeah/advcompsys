@@ -7,6 +7,7 @@ import hashlib
 import re
 import os
 import time
+from functools import partial
 
 authkey = 'HTTP_AUTHORIZATION'
 home = '/advances'
@@ -124,6 +125,7 @@ def no_test_row(row):
 def encode(row, exclude=(8,)):
     return [s.encode('utf-8') for i, s in enumerate(row) if i not in exclude]
 
+
 def order(entry):
     return [entry[i] for i in DB_COLUMNS]
 
@@ -154,7 +156,7 @@ class Participants:
     def get_participants_page(self):
         result = db.select(DB_TABLE)
         result = set(map(tuple, map(order, result)))  # filter duplicates, parse entry
-        result = map(encode, filter(no_test_row, result)) # remove tests and encode to utf
+        result = map(partial(encode, exclude=()), filter(no_test_row, result)) # remove tests and encode to utf
         result.insert(0, DB_COLUMNS)
         return render.participants(result)
 
